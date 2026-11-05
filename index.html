@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Sistema de Préstamos PRO</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        /* =========================================
+           12 TEMAS (4 Claros, 4 Oscuros, 4 Alto Contraste)
+           ========================================= */
+        :root { --glass-bg: rgba(255, 255, 255, 0.4); --glass-border: rgba(255, 255, 255, 0.5); --text-color: #2c3e50; --primary: #007bff; --bg-gradient: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%); }
+        [data-theme="light-purple"] { --bg-gradient: linear-gradient(135deg, #f3e7e9 0%, #e3eeff 100%); --text-color: #4a235a; --primary: #8e44ad; }
+        [data-theme="light-green"] { --bg-gradient: linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%); --text-color: #145a32; --primary: #27ae60; }
+        [data-theme="light-orange"] { --bg-gradient: linear-gradient(135deg, #f6d365 0%, #fda085 100%); --text-color: #6e2c00; --primary: #e67e22; }
+        [data-theme="dark-blue"] { --bg-gradient: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%); --glass-bg: rgba(0, 0, 0, 0.4); --glass-border: rgba(255, 255, 255, 0.1); --text-color: #ecf0f1; --primary: #3498db; }
+        [data-theme="dark-purple"] { --bg-gradient: linear-gradient(135deg, #1a0b2e 0%, #3b185f 100%); --glass-bg: rgba(0,0,0,0.4); --glass-border: rgba(255,255,255,0.1); --text-color: #f5eef8; --primary: #9b59b6; }
+        [data-theme="dark-green"] { --bg-gradient: linear-gradient(135deg, #0b3d2b 0%, #1e5631 100%); --glass-bg: rgba(0,0,0,0.4); --glass-border: rgba(255,255,255,0.1); --text-color: #e8f8f5; --primary: #2ecc71; }
+        [data-theme="dark-red"] { --bg-gradient: linear-gradient(135deg, #2b0c0c 0%, #4a1515 100%); --glass-bg: rgba(0,0,0,0.4); --glass-border: rgba(255,255,255,0.1); --text-color: #fadbd8; --primary: #e74c3c; }
+        [data-theme="hc-yellow"] { --bg-gradient: none; background-color: #000; --glass-bg: #000; --glass-border: #fff; --text-color: #ffff00; --primary: #ffff00; }
+        [data-theme="hc-white"] { --bg-gradient: none; background-color: #000; --glass-bg: #000; --glass-border: #fff; --text-color: #fff; --primary: #fff; }
+        [data-theme="hc-cyan"] { --bg-gradient: none; background-color: #000; --glass-bg: #000; --glass-border: #00ffff; --text-color: #00ffff; --primary: #00ffff; }
+        [data-theme="hc-magenta"] { --bg-gradient: none; background-color: #000; --glass-bg: #000; --glass-border: #ff00ff; --text-color: #ff00ff; --primary: #ff00ff; }
+
+        /* Estilos Base y Glassmorphism */
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background: var(--bg-gradient); color: var(--text-color); height: 100vh; display: flex; flex-direction: column; overflow: hidden; transition: all 0.3s ease; }
+        .glass { background: var(--glass-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid var(--glass-border); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2); }
+
+        /* Estructura Semántica */
+        header { padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; z-index: 10; border-bottom: 1px solid var(--glass-border); }
+        .app-body { display: flex; flex: 1; overflow: hidden; }
+        aside { width: 240px; margin: 15px; border-radius: 20px; padding: 20px; display: flex; flex-direction: column; gap: 15px; }
+        main { flex: 1; margin: 15px; border-radius: 20px; padding: 25px; display: flex; gap: 20px; overflow: hidden; }
+        footer { text-align: center; padding: 10px; font-size: 0.9em; opacity: 0.8; border-top: 1px solid var(--glass-border); }
+
+        /* Paneles Internos */
+        .panel-izquierdo { flex: 1.5; display: flex; flex-direction: column; overflow: hidden; }
+        .panel-derecho { flex: 1; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 15px; padding: 20px; display: flex; flex-direction: column; overflow-y: auto; }
+        
+        .btn { padding: 12px 20px; border: none; border-radius: 10px; background: var(--primary); color: #fff; cursor: pointer; font-weight: bold; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 1rem; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        [data-theme^="hc-"] .btn { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
+        
+        select { padding: 10px; border-radius: 8px; background: var(--glass-bg); color: var(--text-color); border: 1px solid var(--glass-border); outline: none; font-weight: bold; cursor: pointer; }
+        select option { background: #fff; color: #000; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid var(--glass-border); }
+        th { font-weight: bold; opacity: 0.8; }
+        tbody tr { cursor: pointer; transition: 0.2s; }
+        tbody tr:hover { background: var(--glass-border); }
+        tbody tr.selected { background: var(--primary); color: #fff; }
+
+        .stat-cards { display: flex; gap: 15px; margin-bottom: 20px; }
+        .stat-card { flex: 1; padding: 15px; border-radius: 15px; text-align: center; border: 1px solid var(--glass-border); background: var(--glass-bg); }
+        .stat-card h3 { font-size: 0.9rem; opacity: 0.8; margin-bottom: 5px; }
+        .stat-card p { font-size: 1.5rem; font-weight: bold; color: var(--primary); }
+
+        /* Detalles del Panel Derecho */
+        .detalle-vacio { text-align: center; opacity: 0.5; margin-top: 100px; font-size: 1.2rem; }
+        .detalle-nombre { font-size: 1.5rem; font-weight: bold; margin-bottom: 5px; text-align: center; }
+        .detalle-info { font-size: 0.9rem; opacity: 0.8; text-align: center; margin-bottom: 20px; }
+        .detalle-box { background: var(--bg-gradient); border: 1px solid var(--glass-border); border-radius: 10px; padding: 15px; text-align: center; margin-bottom: 15px; }
+        .detalle-box h4 { font-size: 0.9rem; opacity: 0.8; margin-bottom: 5px; }
+        .detalle-box p { font-size: 1.8rem; font-weight: bold; }
+        progress { width: 100%; height: 15px; border-radius: 10px; margin: 10px 0; }
+        progress::-webkit-progress-bar { background-color: rgba(0,0,0,0.1); border-radius: 10px; }
+        progress::-webkit-progress-value { background-color: var(--primary); border-radius: 10px; }
+
+        /* =========================================
+           NUEVOS ESTILOS PARA LOS ESTADOS (Función 1)
+           ========================================= */
+        .status-verde { color: #28a745; font-weight: bold; }
+        .status-amarillo { color: #ffc107; font-weight: bold; text-shadow: 1px 1px 1px rgba(0,0,0,0.5); }
+        .status-rojo { color: #dc3545; font-weight: bold; }
+        [data-theme^="hc-"] .status-verde { color: #00ff00; }
+        [data-theme^="hc-"] .status-amarillo { color: #ffff00; }
+        [data-theme^="hc-"] .status-rojo { color: #ff0000; }
+    </style>
+</head>
+<body data-theme="light-blue">
+
+    <!-- HEADER -->
+    <header class="glass">
+        <h1><i class="fa-solid fa-wallet"></i> Control de Préstamos PRO</h1>
+        <select id="selector-tema">
+            <optgroup label="Modos Claros">
+                <option value="light-blue">Claro Azul</option>
+                <option value="light-purple">Claro Morado</option>
+                <option value="light-green">Claro Verde</option>
+                <option value="light-orange">Claro Naranja</option>
+            </optgroup>
+            <optgroup label="Modos Oscuros">
+                <option value="dark-blue">Oscuro Azul</option>
+                <option value="dark-purple">Oscuro Morado</option>
+                <option value="dark-green">Oscuro Verde</option>
+                <option value="dark-red">Oscuro Rojo</option>
+            </optgroup>
+            <optgroup label="Alto Contraste">
+                <option value="hc-yellow">Amarillo / Negro</option>
+                <option value="hc-white">Blanco / Negro</option>
+                <option value="hc-cyan">Cian / Negro</option>
+                <option value="hc-magenta">Magenta / Negro</option>
+            </optgroup>
+        </select>
+    </header>
+
+    <div class="app-body">
+        <!-- SIDEBAR -->
+        <aside class="glass">
+            <h2>Menú</h2>
+            <button class="btn" id="btn-nuevo-cliente"><i class="fa-solid fa-user-plus"></i> Nuevo Cliente</button>
+            <button class="btn" id="btn-respaldo"><i class="fa-solid fa-save"></i> Respaldo BD</button>
+            <button class="btn" onclick="probarAlerta()"><i class="fa-solid fa-bell"></i> Notificación</button>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="glass">
+            <!-- Panel Izquierdo (Tabla) -->
+            <div class="panel-izquierdo">
+                <div class="stat-cards">
+                    <div class="stat-card">
+                        <h3>Total Prestado</h3>
+                        <p id="stat-prestado">$0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Recuperado</h3>
+                        <p id="stat-recuperado">$0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Por Cobrar</h3>
+                        <p id="stat-cobrar">$0</p>
+                    </div>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Cédula</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla-clientes">
+                        <!-- JS inyecta los clientes -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Panel Derecho (Detalles) -->
+            <div class="panel-derecho" id="panel-detalle">
+                <div class="detalle-vacio">
+                    <i class="fa-solid fa-hand-pointer" style="font-size: 3rem; margin-bottom: 15px;"></i>
+                    <p>Selecciona un cliente para ver su información</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="glass">
+        <p>Sistema de Gestión &copy; 2026 - Electron / Glassmorphism</p>
+    </footer>
+
+    <script src="renderer.js"></script>
+</body>
+</html>

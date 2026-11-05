@@ -1,0 +1,14 @@
+{
+  "name": "prestamos-web",
+  "version": "1.0.0",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "dependencies": {
+    "node-sqlite3-wasm": "^0.8.61"
+  },
+  "devDependencies": {
+    "electron": "^29.0.0"
+  }
+}
