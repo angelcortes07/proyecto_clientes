@@ -1,168 +1,302 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-tema="especial-aurora">
 <head>
-    <meta charset="UTF-8">
-    <title>Sistema de Préstamos PRO</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <style>
-        /* =========================================
-           12 TEMAS (4 Claros, 4 Oscuros, 4 Alto Contraste)
-           ========================================= */
-        :root { --glass-bg: rgba(255, 255, 255, 0.4); --glass-border: rgba(255, 255, 255, 0.5); --text-color: #2c3e50; --primary: #007bff; --bg-gradient: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%); }
-        [data-theme="light-purple"] { --bg-gradient: linear-gradient(135deg, #f3e7e9 0%, #e3eeff 100%); --text-color: #4a235a; --primary: #8e44ad; }
-        [data-theme="light-green"] { --bg-gradient: linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%); --text-color: #145a32; --primary: #27ae60; }
-        [data-theme="light-orange"] { --bg-gradient: linear-gradient(135deg, #f6d365 0%, #fda085 100%); --text-color: #6e2c00; --primary: #e67e22; }
-        [data-theme="dark-blue"] { --bg-gradient: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%); --glass-bg: rgba(0, 0, 0, 0.4); --glass-border: rgba(255, 255, 255, 0.1); --text-color: #ecf0f1; --primary: #3498db; }
-        [data-theme="dark-purple"] { --bg-gradient: linear-gradient(135deg, #1a0b2e 0%, #3b185f 100%); --glass-bg: rgba(0,0,0,0.4); --glass-border: rgba(255,255,255,0.1); --text-color: #f5eef8; --primary: #9b59b6; }
-        [data-theme="dark-green"] { --bg-gradient: linear-gradient(135deg, #0b3d2b 0%, #1e5631 100%); --glass-bg: rgba(0,0,0,0.4); --glass-border: rgba(255,255,255,0.1); --text-color: #e8f8f5; --primary: #2ecc71; }
-        [data-theme="dark-red"] { --bg-gradient: linear-gradient(135deg, #2b0c0c 0%, #4a1515 100%); --glass-bg: rgba(0,0,0,0.4); --glass-border: rgba(255,255,255,0.1); --text-color: #fadbd8; --primary: #e74c3c; }
-        [data-theme="hc-yellow"] { --bg-gradient: none; background-color: #000; --glass-bg: #000; --glass-border: #fff; --text-color: #ffff00; --primary: #ffff00; }
-        [data-theme="hc-white"] { --bg-gradient: none; background-color: #000; --glass-bg: #000; --glass-border: #fff; --text-color: #fff; --primary: #fff; }
-        [data-theme="hc-cyan"] { --bg-gradient: none; background-color: #000; --glass-bg: #000; --glass-border: #00ffff; --text-color: #00ffff; --primary: #00ffff; }
-        [data-theme="hc-magenta"] { --bg-gradient: none; background-color: #000; --glass-bg: #000; --glass-border: #ff00ff; --text-color: #ff00ff; --primary: #ff00ff; }
+<meta charset="UTF-8">
+<title>Control de préstamos</title>
+<link rel="stylesheet" href="node_modules/@fortawesome/fontawesome-free/css/all.min.css">
+<style>
+/* ================= TEMAS BASE ================= */
+:root{--bg:linear-gradient(135deg,#a8e063,#56ab2f);--glass:rgba(255,255,255,.38);--borde:rgba(255,255,255,.55);--txt:#16261a;--acc:#2e7d32;--acct:#fff;--verde:#1e8e3e;--amar:#f0b400;--rojo:#d63031;--sidebar-w:260px;--sidebar-collapsed:80px}
 
-        /* Estilos Base y Glassmorphism */
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
-        body { background: var(--bg-gradient); color: var(--text-color); height: 100vh; display: flex; flex-direction: column; overflow: hidden; transition: all 0.3s ease; }
-        .glass { background: var(--glass-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid var(--glass-border); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2); }
+/* ================= TEMAS NORMALES ================= */
+[data-tema=claro-azul]{--bg:linear-gradient(135deg,#74b9ff,#a29bfe);--txt:#10203a;--acc:#0b5ed7}
+[data-tema=claro-rosa]{--bg:linear-gradient(135deg,#fbc2eb,#a6c1ee);--txt:#3a1030;--acc:#b0124f}
+[data-tema=claro-ambar]{--bg:linear-gradient(135deg,#ffeaa7,#fab1a0);--txt:#3a2410;--acc:#c0471f}
+[data-tema=oscuro-noche]{--bg:linear-gradient(135deg,#0f2027,#2c5364);--glass:rgba(0,0,0,.38);--borde:rgba(255,255,255,.16);--txt:#eaf2f8;--acc:#00cec9;--acct:#00302e}
+[data-tema=oscuro-violeta]{--bg:linear-gradient(135deg,#1e1633,#4b2e83);--glass:rgba(0,0,0,.38);--borde:rgba(255,255,255,.16);--txt:#efeaff;--acc:#b8a9ff;--acct:#1c1240}
+[data-tema=oscuro-bosque]{--bg:linear-gradient(135deg,#0b1d12,#1e4d2b);--glass:rgba(0,0,0,.38);--borde:rgba(255,255,255,.16);--txt:#e6f7ec;--acc:#55efc4;--acct:#06301f}
+[data-tema=oscuro-carbon]{--bg:linear-gradient(135deg,#101010,#2f2f2f);--glass:rgba(255,255,255,.07);--borde:rgba(255,255,255,.16);--txt:#f1f1f1;--acc:#fdcb6e;--acct:#2a2000}
 
-        /* Estructura Semántica */
-        header { padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; z-index: 10; border-bottom: 1px solid var(--glass-border); }
-        .app-body { display: flex; flex: 1; overflow: hidden; }
-        aside { width: 240px; margin: 15px; border-radius: 20px; padding: 20px; display: flex; flex-direction: column; gap: 15px; }
-        main { flex: 1; margin: 15px; border-radius: 20px; padding: 25px; display: flex; gap: 20px; overflow: hidden; }
-        footer { text-align: center; padding: 10px; font-size: 0.9em; opacity: 0.8; border-top: 1px solid var(--glass-border); }
+/* ================= ✨ DISEÑOS ESPECIALES ✨ ================= */
+[data-tema=especial-neon] {
+  --bg: #050505;
+  --glass: rgba(10, 10, 10, 0.7);
+  --borde: #ff007f;
+  --txt: #e0ffff;
+  --acc: #ff007f;
+  --acct: #ffffff;
+  --verde: #00ffcc;
+  --rojo: #ff3333;
+  --amar: #ffcc00;
+  box-shadow: inset 0 0 100px rgba(255, 0, 127, 0.1);
+}
+[data-tema=especial-neon] .vidrio { box-shadow: 0 0 15px rgba(255, 0, 127, 0.3); border: 1px solid #ff007f; backdrop-filter: blur(5px); }
+[data-tema=especial-neon] .btn { box-shadow: 0 0 10px var(--acc); }
 
-        /* Paneles Internos */
-        .panel-izquierdo { flex: 1.5; display: flex; flex-direction: column; overflow: hidden; }
-        .panel-derecho { flex: 1; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 15px; padding: 20px; display: flex; flex-direction: column; overflow-y: auto; }
-        
-        .btn { padding: 12px 20px; border: none; border-radius: 10px; background: var(--primary); color: #fff; cursor: pointer; font-weight: bold; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 1rem; }
-        .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
-        [data-theme^="hc-"] .btn { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
-        
-        select { padding: 10px; border-radius: 8px; background: var(--glass-bg); color: var(--text-color); border: 1px solid var(--glass-border); outline: none; font-weight: bold; cursor: pointer; }
-        select option { background: #fff; color: #000; }
+[data-tema=especial-aurora] {
+  --bg: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+  --glass: rgba(255, 255, 255, 0.05);
+  --borde: rgba(255, 255, 255, 0.15);
+  --txt: #ffffff;
+  --acc: #00d2ff;
+  --acct: #000000;
+  --verde: #00ff87;
+  --rojo: #ff4b4b;
+  --amar: #ffb800;
+}
+[data-tema=especial-aurora] .vidrio { box-shadow: 0 8px 32px rgba(0, 210, 255, 0.15); border: 1px solid rgba(255,255,255,0.1); background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02)); backdrop-filter: blur(20px); }
 
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid var(--glass-border); }
-        th { font-weight: bold; opacity: 0.8; }
-        tbody tr { cursor: pointer; transition: 0.2s; }
-        tbody tr:hover { background: var(--glass-border); }
-        tbody tr.selected { background: var(--primary); color: #fff; }
+[data-tema=especial-lujo] {
+  --bg: linear-gradient(135deg, #1a1a1a, #0d0d0d);
+  --glass: rgba(30, 30, 30, 0.85);
+  --borde: #d4af37;
+  --txt: #fdf5e6;
+  --acc: #d4af37;
+  --acct: #111;
+  --verde: #2ecc71;
+  --rojo: #e74c3c;
+  --amar: #f1c40f;
+}
+[data-tema=especial-lujo] .vidrio { border: 1px solid #d4af37; box-shadow: 0 10px 30px rgba(212, 175, 55, 0.15); background: rgba(20,20,20,0.9); }
+[data-tema=especial-lujo] .btn { color: #111; font-weight: bold; text-shadow: none; }
 
-        .stat-cards { display: flex; gap: 15px; margin-bottom: 20px; }
-        .stat-card { flex: 1; padding: 15px; border-radius: 15px; text-align: center; border: 1px solid var(--glass-border); background: var(--glass-bg); }
-        .stat-card h3 { font-size: 0.9rem; opacity: 0.8; margin-bottom: 5px; }
-        .stat-card p { font-size: 1.5rem; font-weight: bold; color: var(--primary); }
+/* ================= GENERAL ================= */
+*{box-sizing:border-box; margin:0; padding:0}
+body{min-height:100vh;font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg) fixed;color:var(--txt);display:flex;overflow:hidden}
+.vidrio{background:var(--glass);border:1px solid var(--borde);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px); transition: all 0.3s;}
+button,select,input{font:inherit}
+.btn{border:2px solid transparent;background:var(--acc);color:var(--acct);padding:9px 14px;border-radius:10px;font-weight:600;cursor:pointer;transition:.2s}
+.btn:hover{filter:brightness(1.15); transform: translateY(-2px);}
+.btn:active{transform:scale(.97)}
+.btn.sec{background:transparent;color:var(--txt);border-color:var(--borde)}
+.btn.peligro{background:var(--rojo);color:#fff}
+.btn.wa{background:#25d366;color:#fff}
+.btn:disabled{opacity:.6;cursor:not-allowed}
+input,select{padding:9px 11px;border-radius:10px;border:1px solid var(--borde);background:rgba(255,255,255,.85);color:#111;outline:none}
+input:focus, select:focus{box-shadow:0 0 0 3px var(--acc)}
 
-        /* Detalles del Panel Derecho */
-        .detalle-vacio { text-align: center; opacity: 0.5; margin-top: 100px; font-size: 1.2rem; }
-        .detalle-nombre { font-size: 1.5rem; font-weight: bold; margin-bottom: 5px; text-align: center; }
-        .detalle-info { font-size: 0.9rem; opacity: 0.8; text-align: center; margin-bottom: 20px; }
-        .detalle-box { background: var(--bg-gradient); border: 1px solid var(--glass-border); border-radius: 10px; padding: 15px; text-align: center; margin-bottom: 15px; }
-        .detalle-box h4 { font-size: 0.9rem; opacity: 0.8; margin-bottom: 5px; }
-        .detalle-box p { font-size: 1.8rem; font-weight: bold; }
-        progress { width: 100%; height: 15px; border-radius: 10px; margin: 10px 0; }
-        progress::-webkit-progress-bar { background-color: rgba(0,0,0,0.1); border-radius: 10px; }
-        progress::-webkit-progress-value { background-color: var(--primary); border-radius: 10px; }
+/* ================= LAYOUT ================= */
+.app-container { display: flex; width: 100vw; height: 100vh; overflow: hidden; }
+.sidebar {
+  width: var(--sidebar-w); height: 100vh; display: flex; flex-direction: column;
+  background: var(--glass); border-right: 1px solid var(--borde); backdrop-filter: blur(14px);
+  transition: width 0.3s ease; z-index: 10; flex-shrink: 0;
+}
+.sidebar.collapsed { width: var(--sidebar-collapsed); }
+.sidebar.collapsed .nav-text, .sidebar.collapsed .sidebar-header h1 { display: none; }
+.sidebar.collapsed .nav-item { justify-content: center; padding: 14px 0; }
+.sidebar.collapsed .btn-toggle i { transform: rotate(180deg); }
+.sidebar-header { padding: 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--borde); }
+.sidebar-header h1 { font-size: 18px; font-weight: 700; white-space: nowrap; }
+.btn-toggle { background: transparent; border: none; color: var(--txt); font-size: 20px; cursor: pointer; transition: transform 0.3s; }
+.sidebar-menu { flex: 1; padding: 15px 10px; display: flex; flex-direction: column; gap: 5px; overflow-y: auto; }
+.nav-item { display: flex; align-items: center; gap: 15px; padding: 12px 18px; border-radius: 12px; color: var(--txt); text-decoration: none; font-weight: 600; font-size: 15px; cursor: pointer; transition: all 0.2s; border: 1px solid transparent; }
+.nav-item:hover { background: rgba(255,255,255,.1); border-color: var(--borde); }
+.nav-item.active { background: var(--acc); color: var(--acct); }
+.nav-item i { font-size: 18px; width: 20px; text-align: center; }
+.sidebar-footer { padding: 15px; border-top: 1px solid var(--borde); display: flex; flex-direction: column; gap: 5px; }
 
-        /* =========================================
-           NUEVOS ESTILOS PARA LOS ESTADOS (Función 1)
-           ========================================= */
-        .status-verde { color: #28a745; font-weight: bold; }
-        .status-amarillo { color: #ffc107; font-weight: bold; text-shadow: 1px 1px 1px rgba(0,0,0,0.5); }
-        .status-rojo { color: #dc3545; font-weight: bold; }
-        [data-theme^="hc-"] .status-verde { color: #00ff00; }
-        [data-theme^="hc-"] .status-amarillo { color: #ffff00; }
-        [data-theme^="hc-"] .status-rojo { color: #ff0000; }
-    </style>
+.main-wrapper { flex: 1; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+.topbar { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--borde); }
+#buscar { width: 300px; padding: 11px 15px; border-radius: 30px; }
+.topbar-tools { display: flex; gap: 10px; align-items: center; }
+.main-content { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 20px; }
+
+.stats-bar{display:grid;grid-template-columns:1fr 1fr 1fr;gap:15px;}
+.stat{padding:16px 20px;border-radius:16px; border:1px solid var(--borde)}
+.stat small{display:block;font-size:12px;opacity:.75;font-weight:700;letter-spacing:.6px;text-transform:uppercase}
+.stat b{font-size:24px;display:block;margin-top:5px}
+.stat.prestado b{color:var(--acc)}
+.stat.recuperado b{color:var(--verde)}
+.stat.porcobrar b{color:var(--rojo)}
+
+.content-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 20px; flex: 1; min-height: 0; }
+.panel { padding: 20px; overflow: auto; border-radius: 16px; border: 1px solid var(--borde); background: var(--glass); }
+table{width:100%;border-collapse:collapse}
+th{text-align:left;padding:10px 8px;border-bottom:1px solid var(--borde); font-size: 13px; opacity: 0.8;}
+td{padding:12px 8px;border-bottom:1px solid var(--borde)}
+tbody tr{cursor:pointer; transition: background 0.15s;}
+tbody tr:hover{background:rgba(255,255,255,.1)}
+tr.selected{outline:2px solid var(--acc);outline-offset:-2px; background:rgba(255,255,255,.1)}
+.badge{display:inline-block;padding:4px 10px;border-radius:99px;font-size:12px;font-weight:700;color:#fff}
+.badge.verde{background:var(--verde); color:#000}.badge.amarillo{background:var(--amar);color:#222}.badge.rojo{background:var(--rojo)}
+.vacio{text-align:center;padding:40px 10px;opacity:.7;font-size:15px}
+.datos{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+.dato{padding:12px;border:1px solid var(--borde);border-radius:12px; background: rgba(0,0,0,0.05)}
+.dato small{display:block;opacity:.7;font-size:12px;margin-bottom:4px}.dato b{font-size:18px}
+.acciones{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}
+.filtros{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.filtro{background:transparent;border:1.5px solid var(--borde);color:var(--txt);padding:7px 16px;border-radius:99px;font-size:13px;font-weight:600;cursor:pointer;transition:.15s}
+.filtro:hover{background:rgba(255,255,255,.1)}
+.filtro.activo{background:var(--acc);color:var(--acct);border-color:var(--acc)}
+
+/* ================= ✨ LOGIN PREMIUM ✨ ================= */
+#pantalla-login{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;background:var(--bg);overflow:hidden}
+.login-bg-anim{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.blob{position:absolute;border-radius:50%;filter:blur(80px);opacity:.6;animation:float 20s infinite ease-in-out}
+.blob1{width:450px;height:450px;background:var(--acc);top:-100px;left:-100px}
+.blob2{width:400px;height:400px;background:var(--verde);bottom:-100px;right:-100px;animation-delay:-5s}
+.blob3{width:300px;height:300px;background:var(--amar);top:50%;right:20%;animation-delay:-10s}
+@keyframes float{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(60px,-60px) scale(1.1)}66%{transform:translate(-40px,40px) scale(.9)}}
+
+.login-card{position:relative;z-index:2;width:400px;max-width:92vw;padding:45px 35px;text-align:center;animation:slideUp .8s cubic-bezier(.2,.9,.3,1);box-shadow:0 30px 80px rgba(0,0,0,.3); border-radius: 24px; border: 1px solid var(--borde); background: var(--glass); backdrop-filter: blur(20px);}
+.login-card.error{animation:shake .5s}
+@keyframes slideUp{from{opacity:0;transform:translateY(40px) scale(0.95)}to{opacity:1;transform:none}}
+@keyframes shake{10%,90%{transform:translateX(-3px)}20%,80%{transform:translateX(5px)}30%,50%,70%{transform:translateX(-8px)}40%,60%{transform:translateX(8px)}}
+
+.login-logo{width:85px;height:85px;margin:0 auto 20px;border-radius:50%;background:linear-gradient(135deg, var(--acc), var(--verde));color:#fff;display:flex;align-items:center;justify-content:center;font-size:38px;box-shadow:0 15px 35px rgba(0,0,0,.3);animation:pop .6s .2s backwards}
+@keyframes pop{from{transform:scale(0) rotate(-45deg);opacity:0}to{transform:scale(1) rotate(0);opacity:1}}
+.login-card h2{margin:0 0 8px;font-size:26px;letter-spacing:.5px; font-weight: 800;}
+.login-sub{margin:0 0 30px;opacity:.8;font-size:14px; font-weight: 500;}
+.login-field{position:relative;margin:15px 0}
+.login-field > i:first-child{position:absolute;left:16px;top:50%;transform:translateY(-50%);opacity:.6;font-size:16px; color: var(--acc);}
+.login-field input{width:100%;padding:15px 45px;border-radius:14px;font-size:15px; border: 1.5px solid var(--borde); background: rgba(255,255,255,0.9); transition: all 0.3s;}
+.login-field input:focus{ border-color: var(--acc); box-shadow: 0 0 15px rgba(0,0,0,0.1);}
+.toggle-clave{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:transparent;border:none;padding:10px;cursor:pointer;color:#555;border-radius:10px; transition: 0.2s;}
+.toggle-clave:hover{background:rgba(0,0,0,.05)}
+.btn-login{width:100%;padding:15px;margin-top:20px;border-radius:14px;font-size:16px;font-weight:800;letter-spacing:1px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); background: linear-gradient(135deg, var(--acc), var(--verde)); border: none; color: #fff;}
+.btn-login:hover{ transform: translateY(-3px); box-shadow: 0 15px 35px rgba(0,0,0,0.3);}
+#login-error{min-height:22px;margin:15px 0 0;font-weight:600;color:var(--rojo);font-size:14px}
+
+/* ================= ESTILOS PARA EL MODAL DE CLIENTES ================= */
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; text-align: left; padding: 5px 0; }
+.input-group { display: flex; flex-direction: column; gap: 6px; }
+.input-group label { font-size: 13px; font-weight: 600; color: #444; margin-left: 2px; }
+.input-group label i { margin-right: 5px; color: var(--acc); width: 14px; text-align: center; }
+.swal2-input.swal-custom-input {
+  margin: 0 !important; width: 100% !important; height: 42px !important;
+  border-radius: 10px !important; font-size: 14px !important; border: 1.5px solid #ccc !important;
+  box-shadow: none !important; padding: 8px 12px !important; transition: all 0.2s ease !important; background: #f8f9fa !important;
+}
+.swal2-input.swal-custom-input:focus {
+  border-color: var(--acc) !important; background: #fff !important; box-shadow: 0 0 0 4px rgba(46, 125, 50, 0.15) !important;
+}
+
+@media(max-width:1000px){
+  .content-grid{grid-template-columns:1fr}
+  .stats-bar{grid-template-columns:1fr}
+  #buscar{width: 200px;}
+}
+</style>
 </head>
-<body data-theme="light-blue">
+<body>
 
-    <!-- HEADER -->
-    <header class="glass">
-        <h1><i class="fa-solid fa-wallet"></i> Control de Préstamos PRO</h1>
-        <select id="selector-tema">
-            <optgroup label="Modos Claros">
-                <option value="light-blue">Claro Azul</option>
-                <option value="light-purple">Claro Morado</option>
-                <option value="light-green">Claro Verde</option>
-                <option value="light-orange">Claro Naranja</option>
-            </optgroup>
-            <optgroup label="Modos Oscuros">
-                <option value="dark-blue">Oscuro Azul</option>
-                <option value="dark-purple">Oscuro Morado</option>
-                <option value="dark-green">Oscuro Verde</option>
-                <option value="dark-red">Oscuro Rojo</option>
-            </optgroup>
-            <optgroup label="Alto Contraste">
-                <option value="hc-yellow">Amarillo / Negro</option>
-                <option value="hc-white">Blanco / Negro</option>
-                <option value="hc-cyan">Cian / Negro</option>
-                <option value="hc-magenta">Magenta / Negro</option>
-            </optgroup>
-        </select>
-    </header>
+<!-- ============ LOGIN PREMIUM ============ -->
+<div id="pantalla-login">
+  <div class="login-bg-anim">
+    <div class="blob blob1"></div><div class="blob blob2"></div><div class="blob blob3"></div>
+  </div>
+  <div class="login-card" id="login-card">
+    <div class="login-logo"><i class="fa-solid fa-hand-holding-dollar"></i></div>
+    <h2 id="login-titulo">Bienvenido</h2>
+    <p class="login-sub" id="login-sub">Ingresa a tu panel de control</p>
+    <div class="login-field">
+      <i class="fa-solid fa-user"></i><input id="login-usuario" type="text" placeholder="Usuario" autocomplete="off">
+    </div>
+    <div class="login-field">
+      <i class="fa-solid fa-lock"></i><input id="login-clave" type="password" placeholder="Clave">
+      <button type="button" id="toggle-clave" class="toggle-clave"><i class="fa-solid fa-eye"></i></button>
+    </div>
+    <button id="login-boton" class="btn-login">ENTRAR</button>
+    <p id="login-error" role="alert"></p>
+  </div>
+</div>
 
-    <div class="app-body">
-        <!-- SIDEBAR -->
-        <aside class="glass">
-            <h2>Menú</h2>
-            <button class="btn" id="btn-nuevo-cliente"><i class="fa-solid fa-user-plus"></i> Nuevo Cliente</button>
-            <button class="btn" id="btn-respaldo"><i class="fa-solid fa-save"></i> Respaldo BD</button>
-            <button class="btn" onclick="probarAlerta()"><i class="fa-solid fa-bell"></i> Notificación</button>
-        </aside>
-
-        <!-- MAIN CONTENT -->
-        <main class="glass">
-            <!-- Panel Izquierdo (Tabla) -->
-            <div class="panel-izquierdo">
-                <div class="stat-cards">
-                    <div class="stat-card">
-                        <h3>Total Prestado</h3>
-                        <p id="stat-prestado">$0</p>
-                    </div>
-                    <div class="stat-card">
-                        <h3>Recuperado</h3>
-                        <p id="stat-recuperado">$0</p>
-                    </div>
-                    <div class="stat-card">
-                        <h3>Por Cobrar</h3>
-                        <p id="stat-cobrar">$0</p>
-                    </div>
-                </div>
-
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Nombre</th>
-                            <th>Cédula</th>
-                            <th>Estado</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tabla-clientes">
-                        <!-- JS inyecta los clientes -->
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Panel Derecho (Detalles) -->
-            <div class="panel-derecho" id="panel-detalle">
-                <div class="detalle-vacio">
-                    <i class="fa-solid fa-hand-pointer" style="font-size: 3rem; margin-bottom: 15px;"></i>
-                    <p>Selecciona un cliente para ver su información</p>
-                </div>
-            </div>
-        </main>
+<!-- ============ APP CONTAINER ============ -->
+<div class="app-container">
+  
+  <!-- SIDEBAR (MENÚ LATERAL) -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <h1><i class="fa-solid fa-hand-holding-dollar"></i> Mi Préstamo</h1>
+      <button class="btn-toggle" id="btn-toggle-menu"><i class="fa-solid fa-bars"></i></button>
+    </div>
+    
+    <div class="sidebar-menu">
+      <a class="nav-item active" data-menu="dashboard">
+        <i class="fa-solid fa-chart-pie"></i> <span class="nav-text">Dashboard</span>
+      </a>
+      <a class="nav-item" id="nav-avisos">
+        <i class="fa-solid fa-bell"></i> <span class="nav-text">Ruta de Cobro</span>
+      </a>
+      <a class="nav-item" id="nav-caja">
+        <i class="fa-solid fa-cash-register"></i> <span class="nav-text">Cierre de Caja</span>
+      </a>
+      <a class="nav-item" id="nav-papelera">
+        <i class="fa-solid fa-trash-can"></i> <span class="nav-text">Papelera</span>
+      </a>
     </div>
 
-    <!-- FOOTER -->
-    <footer class="glass">
-        <p>Sistema de Gestión &copy; 2026 - Electron / Glassmorphism</p>
-    </footer>
+    <div class="sidebar-footer">
+      <a class="nav-item" id="nav-exportar">
+        <i class="fa-solid fa-file-csv"></i> <span class="nav-text">Exportar CSV</span>
+      </a>
+      <a class="nav-item" id="nav-respaldo">
+        <i class="fa-solid fa-floppy-disk"></i> <span class="nav-text">Respaldo</span>
+      </a>
+      <a class="nav-item" id="nav-ayuda">
+        <i class="fa-solid fa-circle-question"></i> <span class="nav-text">Ayuda</span>
+      </a>
+    </div>
+  </aside>
 
-    <script src="renderer.js"></script>
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="main-wrapper">
+    <header class="topbar">
+      <input id="buscar" type="search" placeholder="🔍 Buscar cliente o cédula...">
+      <div class="topbar-tools">
+        <select id="selector-tema" aria-label="Tema">
+          <optgroup label="✨ Diseños Especiales">
+            <option value="especial-aurora">Aurora (Mágico)</option>
+            <option value="especial-neon">Cyberpunk (Neón)</option>
+            <option value="especial-lujo">Lujo (Oro Negro)</option>
+          </optgroup>
+          <optgroup label="Claros">
+            <option value="claro-verde">Claro verde</option>
+            <option value="claro-azul">Claro azul</option>
+            <option value="claro-rosa">Claro rosa</option>
+            <option value="claro-ambar">Claro ámbar</option>
+          </optgroup>
+          <optgroup label="Oscuros">
+            <option value="oscuro-noche">Oscuro noche</option>
+            <option value="oscuro-violeta">Oscuro violeta</option>
+            <option value="oscuro-bosque">Oscuro bosque</option>
+            <option value="oscuro-carbon">Oscuro carbón</option>
+          </optgroup>
+        </select>
+        <button id="btn-nuevo" class="btn"><i class="fa-solid fa-user-plus"></i> Nuevo Cliente</button>
+      </div>
+    </header>
+
+    <div class="main-content">
+      <section class="stats-bar">
+        <div class="stat vidrio prestado"><small>Total prestado</small><b id="stat-prestado">$0</b></div>
+        <div class="stat vidrio recuperado"><small>Total recuperado</small><b id="stat-recuperado">$0</b></div>
+        <div class="stat vidrio porcobrar"><small>Por cobrar</small><b id="stat-porcobrar">$0</b></div>
+      </section>
+
+      <div class="content-grid">
+        <section class="panel vidrio">
+          <div class="filtros">
+            <button class="filtro activo" id="filtro-todos">Todos</button>
+            <button class="filtro" id="filtro-hoy">Ruta de Hoy</button>
+            <button class="filtro" id="filtro-atrasados">Atrasados</button>
+          </div>
+          <table>
+            <thead><tr><th>Cliente</th><th>Cédula</th><th>Saldo</th><th>Estado</th></tr></thead>
+            <tbody id="tabla-clientes"></tbody>
+          </table>
+        </section>
+
+        <section class="panel vidrio" id="detalle">
+          <div class="vacio"><i class="fa-solid fa-hand-pointer fa-2x"></i><p>Selecciona un cliente para ver su información.</p></div>
+        </section>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="node_modules/sweetalert2/dist/sweetalert2.all.min.js"></script>
+<script src="renderer.js"></script>
 </body>
 </html>
